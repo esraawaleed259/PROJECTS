@@ -1,0 +1,7 @@
+{
+  "voters": [
+    { "id": "voter1", "name": "Ali" },
+    { "id": "voter2", "name": "Sara" },
+    { "id": "voter3", "name": "Omar" }
+  ]
+}

@@ -1,0 +1,9 @@
+
+[
+    { "name": "Alice", "publicKey": "AlicePublic", "privateKey": "AlicePrivate", "balance": 100 },
+    { "name": "Bob", "publicKey": "BobPublic", "privateKey": "BobPrivate", "balance": 100 },
+    { "name": "Charlie", "publicKey": "CharliePublic", "privateKey": "CharliePrivate", "balance": 100 },
+    { "name": "Diana", "publicKey": "DianaPublic", "privateKey": "DianaPrivate", "balance": 100 },
+    { "name": "Eve", "publicKey": "EvePublic", "privateKey": "EvePrivate", "balance": 100 },
+    { "name": "Frank", "publicKey": "FrankPublic", "privateKey": "FrankPrivate", "balance": 100 }
+]

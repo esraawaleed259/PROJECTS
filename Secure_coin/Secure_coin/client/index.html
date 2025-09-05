@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>cryptocurrency App </title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      max-width: 960px;
+      margin: auto;
+      padding: 30px;
+      background: linear-gradient(135deg, #1f2937, #111827);
+      color: #f3f4f6;
+    }
+
+    h1 {
+      color: #c7d2fe;
+      text-align: center;
+      font-size: 2.8em;
+      margin-bottom: 35px;
+      font-weight: 700;
+    }
+
+    h2 {
+      color: #a5b4fc;
+      margin-bottom: 15px;
+      font-size: 1.5em;
+    }
+
+    .section {
+      background-color: #1e293b;
+      padding: 25px;
+      margin-top: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 13px 15px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      font-size: 1em;
+      background: #0f172a;
+      color: #f1f5f9;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #818cf8;
+      box-shadow: 0 0 6px rgba(129, 140, 248, 0.7);
+      background: #1e293b;
+    }
+
+    button {
+      background-color: #6366f1;
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #4f46e5;
+      transform: scale(1.03);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #1e293b;
+      text-align: center;
+    }
+
+    th {
+      background-color: #1e40af;
+      color: #e0e7ff;
+      font-weight: 600;
+    }
+
+    pre {
+      background-color: #0f172a;
+      padding: 15px;
+      border-radius: 10px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .success {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .error {
+      color: #f87171;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>cryptocurrency App</h1>
+
+  <div class="section">
+    <h2>1. Upload User File (.json)</h2>
+    <input type="file" id="userFile">
+    <button onclick="handleUpload()">Upload User File</button>
+    <p id="uploadResult"></p>
+  </div>
+
+  <div class="section" id="balanceSection" style="display:none;">
+    <h2>2. View Uploaded User's Balance</h2>
+    <button onclick="viewUserBalance()">View Balance</button>
+    <p id="userBalanceResult"></p>
+  </div>
+
+  <div class="section" id="txSection" style="display:none;">
+    <h2>3. Send Transaction</h2>
+    <form id="tx-form">
+      <label>From:</label>
+      <input type="text" id="fromUser" disabled>
+      <label>To:</label>
+      <select id="toUser"></select>
+      <label>Amount:</label>
+      <input type="number" id="amount" min="1" required>
+      <button type="submit">Send</button>
+    </form>
+    <p id="txStatus"></p>
+  </div>
+
+  <div class="section" id="mineSection" style="display:none;">
+    <h2>4. Mine Block</h2>
+    <button onclick="mineBlock()">Mine</button>
+    <p id="mineStatus"></p>
+  </div>
+
+  <div class="section" id="allBalancesSection" style="display:none;">
+    <h2>5. All Users' Balances</h2>
+    <button onclick="fetchBalances()">Refresh</button>
+    <table id="balances-table">
+      <thead><tr><th>User</th><th>Balance</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="section" id="currentBlockSection" style="display:none;">
+    <h2>6. Current Block</h2>
+    <button onclick="viewCurrentBlock()">Show Current Block</button>
+    <pre id="currentBlockResult"></pre>
+  </div>
+
+  <div class="section" id="fullChainSection" style="display:none;">
+    <h2>7. Full Blockchain</h2>
+    <button onclick="viewFullChain()">Show Full Blockchain</button>
+    <pre id="fullChainResult"></pre>
+  </div>
+
+  <div class="section" id="peerSection" style="display:none;">
+    <h2>8. Connect to Peer</h2>
+    <input type="text" id="peerUrl" placeholder="http://peer-ip:port">
+    <button onclick="connectToPeer()">Connect</button>
+    <p id="peerStatus"></p>
+  </div>
+
+  <div class="section" id="doubleSpendSection" style="display:none;">
+    <h2>9. Simulate Double Spending Attack</h2>
+    <button onclick="simulateDoubleSpending()">Simulate Double Spending</button>
+    <p id="doubleSpendStatus"></p>
+  </div>
+
+  <script>
+    let uploadedUser = null;
+
+    async function handleUpload() {
+      const fileInput = document.getElementById('userFile');
+      const result = document.getElementById('uploadResult');
+      if (fileInput.files.length === 0) {
+        alert("Please select a file.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const text = await file.text();
+      try {
+        uploadedUser = JSON.parse(text);
+        if (!uploadedUser.name || !uploadedUser.publicKey) throw new Error();
+
+        result.textContent = `✅ Uploaded: ${uploadedUser.name}`;
+        result.className = 'success';
+        document.getElementById('fromUser').value = uploadedUser.name;
+
+        document.getElementById('balanceSection').style.display = 'block';
+        document.getElementById('txSection').style.display = 'block';
+        document.getElementById('mineSection').style.display = 'block';
+        document.getElementById('allBalancesSection').style.display = 'block';
+        document.getElementById('currentBlockSection').style.display = 'block';
+        document.getElementById('fullChainSection').style.display = 'block';
+        document.getElementById('peerSection').style.display = 'block';
+        document.getElementById('doubleSpendSection').style.display = 'block';
+
+        loadToUsers(uploadedUser.name);
+        fetchBalances();
+      } catch {
+        result.textContent = "❌ Invalid JSON file.";
+        result.className = 'error';
+        uploadedUser = null;
+      }
+    }
+
+    async function viewUserBalance() {
+      const res = await fetch('/api/user-balance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(uploadedUser)
+      });
+      const data = await res.json();
+      const result = document.getElementById('userBalanceResult');
+      result.textContent = data.error ? '❌ ' + data.error : `✅ Balance: ${data.balance}`;
+      result.className = data.error ? 'error' : 'success';
+    }
+
+    async function fetchBalances() {
+      const res = await fetch('/api/balances');
+      const data = await res.json();
+      const table = document.querySelector('#balances-table tbody');
+      table.innerHTML = '';
+      for (const user in data) {
+        table.innerHTML += `<tr><td>${user}</td><td>${data[user]}</td></tr>`;
+      }
+    }
+
+    async function mineBlock() {
+      const res = await fetch('/api/mine', { method: 'POST' });
+      const data = await res.json();
+      const status = document.getElementById('mineStatus');
+      status.textContent = data.message;
+      status.className = res.ok ? 'success' : 'error';
+      fetchBalances();
+    }
+
+    function loadToUsers(excludeUser) {
+      const select = document.getElementById('toUser');
+      select.innerHTML = '';
+      const users = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Frank'];
+      for (const user of users) {
+        if (user !== excludeUser) {
+          select.innerHTML += `<option value="${user}">${user}</option>`;
+        }
+      }
+    }
+
+    document.getElementById('tx-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const from = uploadedUser.name;
+      const to = document.getElementById('toUser').value;
+      const amount = parseInt(document.getElementById('amount').value);
+      const status = document.getElementById('txStatus');
+
+      const res = await fetch('/api/transaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from, to, amount })
+      });
+
+      const result = await res.json();
+      status.textContent = result.message || result.error;
+      status.className = res.ok ? 'success' : 'error';
+      fetchBalances();
+    });
+
+    async function viewCurrentBlock() {
+      const res = await fetch('/api/current-block');
+      const data = await res.json();
+      document.getElementById('currentBlockResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function viewFullChain() {
+      const res = await fetch('/api/full-chain');
+      const data = await res.json();
+      document.getElementById('fullChainResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function connectToPeer() {
+      const peerUrl = document.getElementById('peerUrl').value;
+      const res = await fetch('/api/connect-peer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ peer: peerUrl })
+      });
+
+      const result = await res.json();
+      const status = document.getElementById('peerStatus');
+      status.textContent = result.message || result.error;
+      status.className = res.ok ? 'success' : 'error';
+    }
+
+    async function simulateDoubleSpending() {
+      const from = uploadedUser.name;
+      const recipients = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Frank'].filter(u => u !== from);
+      const to1 = recipients[0];
+      const to2 = recipients[1];
+      const amount = 10;
+
+      const status = document.getElementById('doubleSpendStatus');
+      status.textContent = "⏳ Sending double transactions...";
+      status.className = '';
+
+      const res1 = fetch('/api/transaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from, to: to1, amount })
+      });
+
+      const res2 = fetch('/api/transaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from, to: to2, amount })
+      });
+
+      const [r1, r2] = await Promise.all([res1, res2]);
+      const j1 = await r1.json();
+      const j2 = await r2.json();
+
+      status.textContent = `Transaction 1 to ${to1}: ${j1.message || j1.error}\nTransaction 2 to ${to2}: ${j2.message || j2.error}`;
+      status.className = r1.ok && r2.ok ? 'success' : 'error';
+      fetchBalances();
+    }
+  </script>
+</body>
+</html>
