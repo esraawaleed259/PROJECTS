@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Web Application Firewall (WAF) — SQLi & XSS Protection
 1) Overview
 
@@ -215,3 +216,6 @@ Designed JSON logging schema for SIEM dashboards.
 
 Tuned rules to minimize false positives.
 
+=======
+# PROJECTS
+>>>>>>> e2bdbc5ee777dddb81b9277dda16b5ab3907f9e9
