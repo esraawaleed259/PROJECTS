@@ -1,0 +1,86 @@
+/* dashboard.css */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7fa;
+  color: #333;
+}
+
+header {
+  background-color: #1e293b;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filters input,
+.filters select {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 48%;
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.log-table thead {
+  background-color: #1e293b;
+  color: #fff;
+}
+
+.log-table th,
+.log-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.log-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.status-safe {
+  color: green;
+  font-weight: bold;
+}
+
+.status-warning {
+  color: orange;
+  font-weight: bold;
+}
+
+.status-danger {
+  color: red;
+  font-weight: bold;
+}
+
+.footer {
+  text-align: center;
+  padding: 10px;
+  color: #888;
+  font-size: 0.9rem;
+}
+
